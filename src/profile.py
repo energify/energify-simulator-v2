@@ -33,8 +33,4 @@ class Profile:
         else:
             prof_temp = 40
 
-        return self.samples[prof_temp][now_datetime.hour.real]
-
-    def __str__(self) -> str:
-        for temperature in self.samples.keys():
-            print(f"{temperature} ºC -> {self.samples[temperature]}")
+        return self.samples[prof_temp][now_datetime.hour]
