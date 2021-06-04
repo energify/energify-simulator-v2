@@ -35,7 +35,9 @@ class Community:
                 print(start)
 
             for house in self.houses:
-                house.simulate(start, interval, temperature, irradiance)
+                measure = house.simulate(
+                    start, interval, temperature, irradiance)
+                house.notify_measure(measure, start)
 
             start = datetime.fromtimestamp(start.timestamp() + interval)
 

@@ -1,18 +1,59 @@
+import json
 from profile import Profile
 from random import randint
 from datetime import datetime
-from typing import Dict
+from util import create_socket, generate_email, generate_word, request
+from socketio import Client as SocketClient
 
 
 class House:
     profile: Profile
+    socket: SocketClient
+    bearer_token: str
+    email: str
+    password: str
     panels_area: float
     people_number: int
 
     def __init__(self, profile: Profile, panels_area: float, people_number: int) -> None:
+        self.bearer_token = ""
+        self.email = ""
+        self.password = ""
         self.profile = profile
         self.panels_area = panels_area
         self.people_number = people_number
+
+    def register(self):
+        self.email = generate_email()
+        self.password = generate_word(8)
+        payload = {
+            'email': self.email,
+            'password': self.password,
+            'name': generate_word(8),
+            'hederaAccountId': generate_word(8)
+        }
+        response = request('/auth/register', "POST", payload)
+        print(f"House {response['email']} registered")
+
+    def login(self):
+        payload = {'email': self.email, 'password': self.password}
+        response = request('/auth/login', "POST", payload, self.bearer_token)
+        self.bearer_token = response["accessToken"]
+        print(f"House {self.email} logged in")
+
+    def set_prices(self, buy_price: float, sell_price: float):
+        payload = {'buyPrice': buy_price, 'sellPrice': sell_price}
+        request("/users/prices", "PUT", payload, self.bearer_token)
+        print(f"House {self.email} set prices")
+
+    def establish_connection(self):
+        self.socket = create_socket(["/measures", self.bearer_token])
+        self.socket.sleep(1.0)
+        print(f"House {self.email} sid is {self.socket.sid}")
+
+    def notify_measure(self, measure: float, time: datetime):
+        self.socket.emit("store", {'value': measure,
+                         'timestamp': time}, '/measures')
 
     def produce(self, irradiance: float):
         return self.panels_area * (randint(15, 22)/100) * irradiance * 1 / 1000
