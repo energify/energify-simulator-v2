@@ -1,6 +1,7 @@
 import pickle
 from datetime import datetime
 from pathlib import Path
+from time import sleep
 from typing import Dict, List, Tuple
 from environment import Environment
 from house import House
@@ -24,7 +25,7 @@ class Community:
     def add_house(self, house: House) -> None:
         self.houses.append(house)
 
-    def start_simulation(self, interval: int) -> None:
+    def start_simulation(self, interval: int, sleep_between_intervals: float) -> None:
         start = self.environment.get_start_date()
         end = self.environment.get_end_date()
 
@@ -38,6 +39,8 @@ class Community:
                 measure = house.simulate(
                     start, interval, temperature, irradiance)
                 house.notify_measure(measure, start)
+
+            sleep(sleep_between_intervals)
 
             start = datetime.fromtimestamp(start.timestamp() + interval)
 
@@ -72,7 +75,8 @@ class Community:
 
         for house in self.houses:
             key = str(self.houses.index(house))
-            plt.plot(x, houses_y[key], label=f"House #{int(key) + 1}, {house}")
+            plt.plot(x, houses_y[key],
+                     label=f"House #{int(key) + 1}, {house}")
             plt.legend(fontsize="x-small")
         plt.show()
 

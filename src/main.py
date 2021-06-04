@@ -15,6 +15,7 @@ if mode == "new":
     environment_name = argv[3]
     houses_num = int(argv[4])
     interval = int(argv[5])
+    sleep_between_intervals = float(argv[6])
 
     environment = Environment(f"environments/{environment_name}.csv")
     community = Community(community_name, environment)
@@ -37,9 +38,9 @@ if mode == "new":
         house.set_prices(buy_price, sell_price)
         house.establish_connection()
         community.add_house(house)
-        sleep(4)
+
     # community.save()
-    community.start_simulation(interval)
+    community.start_simulation(interval, sleep_between_intervals)
     # community.start_simulation_plot(interval, 24)
 
 elif mode == "load":

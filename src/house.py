@@ -1,8 +1,7 @@
-import json
 from profile import Profile
 from random import randint
 from datetime import datetime
-from util import create_socket, generate_email, generate_word, request
+from util import base_url,  generate_email, generate_word, request
 from socketio import Client as SocketClient
 
 
@@ -47,13 +46,15 @@ class House:
         print(f"House {self.email} set prices")
 
     def establish_connection(self):
-        self.socket = create_socket(["/measures", self.bearer_token])
-        self.socket.sleep(1.0)
+        self.socket = SocketClient()
+        self.socket.connect(f"{base_url}:6379", headers={
+            "authorization": f"{self.bearer_token}"}, namespaces=["", "/measures"])
+
         print(f"House {self.email} sid is {self.socket.sid}")
 
     def notify_measure(self, measure: float, time: datetime):
-        self.socket.emit("store", {'value': measure,
-                         'timestamp': time}, '/measures')
+        self.socket.emit("store", data={'value': measure, 'timestamp': time.timestamp()},
+                         namespace='/measures')
 
     def produce(self, irradiance: float):
         return self.panels_area * (randint(15, 22)/100) * irradiance * 1 / 1000

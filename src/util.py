@@ -1,7 +1,9 @@
 import string
 import random
+from time import sleep
+from typing import List
 import requests
-from socketio.client import Client as SocketClient
+from socketio import Client as SocketClient
 
 base_url = "http://13.84.134.143"
 
@@ -21,10 +23,3 @@ def request(endpoint: str, method: str, body: str or None, token: str = None):
                                          "Authorization": f"Bearer {token}"},
                                 json=body)
     return response.json()
-
-
-def create_socket(namespaces: list[str], token: str = None) -> SocketClient:
-    socket = SocketClient(logger=True)
-    socket.connect(f"{base_url}:6379", {
-                   "authorization": f"Bearer {token}"}, None, namespaces=namespaces)
-    return socket
