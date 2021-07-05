@@ -5,7 +5,7 @@ from typing import List
 import requests
 from socketio import Client as SocketClient
 
-base_url = "http://13.84.134.143"
+base_url = "http://localhost"
 
 
 def generate_word(length):

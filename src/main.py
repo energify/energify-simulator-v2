@@ -25,23 +25,21 @@ if mode == "new":
         if people_num == 0:
             people_num += 1
 
-        panels_area = int(abs(random.normal(3, 10)))
+        panels_area = 3  # int(abs(random.normal(3, 10)))
 
-        buy_price = round(abs(random.normal(1.15, 0.02)), 2)
-        sell_price = round(abs(random.normal(buy_price, 0.01)), 2)
-        while sell_price <= buy_price:
-            sell_price = round(abs(random.normal(buy_price, 0.02)), 2)
+        buy_price = round(abs(random.normal(0.16, 0.01)), 3)
+        sell_price = round(abs(random.normal(0.16, 0.01)), 3)
 
         house = House(profile, panels_area, people_num)
-        house.register()
-        house.login()
-        house.set_prices(buy_price, sell_price)
-        house.establish_connection()
+        # house.register()
+        # house.login()
+        #house.set_prices(buy_price, sell_price)
+        # house.establish_connection()
         community.add_house(house)
 
     # community.save()
-    community.start_simulation(interval, sleep_between_intervals)
-    # community.start_simulation_plot(interval, 24)
+    # community.start_simulation(interval, sleep_between_intervals)
+    community.start_simulation_plot(interval, 24)
 
 elif mode == "load":
     community_name = argv[2]

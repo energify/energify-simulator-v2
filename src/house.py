@@ -12,12 +12,14 @@ class House:
     email: str
     password: str
     panels_area: float
+    panel_efficiency: float
     people_number: int
 
     def __init__(self, profile: Profile, panels_area: float, people_number: int) -> None:
         self.bearer_token = ""
         self.email = ""
         self.password = ""
+        self.panel_efficiency = randint(15, 22) / 100
         self.profile = profile
         self.panels_area = panels_area
         self.people_number = people_number
@@ -28,7 +30,7 @@ class House:
         payload = {
             'email': self.email,
             'password': self.password,
-            'name': generate_word(8),
+            'name': self.password,
             'hederaAccountId': generate_word(8)
         }
         response = request('/auth/register', "POST", payload)
@@ -57,16 +59,16 @@ class House:
                          namespace='/measures')
 
     def produce(self, irradiance: float):
-        return self.panels_area * (randint(15, 22)/100) * irradiance * 1 / 1000
+        return self.panels_area * self.panel_efficiency * irradiance * 1 / 1000
 
     def consume(self, temperature: float, time: datetime):
         base_value = self.profile.get_hour_value(temperature, time)
         appliances = base_value * 0.19
-        appliances += appliances * 0.4 * self.people_number
+        appliances += appliances * 0.4 * (self.people_number - 1)
         cooking = base_value * 0.40
-        cooking += cooking * 0.1 * self.people_number
+        cooking += cooking * 0.1 * (self.people_number - 1)
         water_heating = base_value * 0.15
-        water_heating += water_heating * 0.2 * self.people_number
+        water_heating += water_heating * 0.2 * (self.people_number - 1)
         air_conditioning = base_value * 0.05
         space_heating = base_value * 0.21
 
