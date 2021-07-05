@@ -75,8 +75,8 @@ class Community:
 
         for house in self.houses:
             key = str(self.houses.index(house))
-            plt.plot(x, houses_y[key],
-                     label=f"House #{int(key) + 1}, {house}")
+            print(sum(houses_y[key]) / 365)
+            plt.plot(x, houses_y[key], label=f"House #{int(key) + 1}, {house}")
             plt.legend(fontsize="x-small")
         plt.show()
 
